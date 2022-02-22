@@ -131,10 +131,12 @@ class DQN_openpit():
         done = False
         total_reward = 0
         batch_size = 256
-   
+        state_to_env = np.zeros((self.NUM_AGENTS,5), dtype=int).tolist()
         for e in range(self.EPISODES):
-            state = self.env.reset()        
-            #state = np.reshape(state, [1, state_size])        
+            #state = self.env.reset()        
+            #state = np.reshape(state, [1, state_size])
+            state = np.zeros((self.NUM_AGENTS,self.state_size), dtype=int).tolist()
+            
             for time in range(50):
                 # env.render()
                 
@@ -142,8 +144,9 @@ class DQN_openpit():
                 action_n = []
                 for i in range(self.NUM_AGENTS):
                     location = self.env.getRobotLocation(i)
-                    print(state[i])
-                    state[i] = np.reshape(state[i], [1, self.state_size])
+                    #print(state[i])
+                    #state[i] = np.reshape(state[i], [1, self.state_size])
+                    state_to_env[i] = [np.argmax(state[i][0:self.action_size], axis=0)]+state[i][self.action_size:self.state_size]
                     action_n.append(self.select_action(state[i], i, location))
                 
                 # ============ Version: queue and checkpoints ===================
@@ -156,12 +159,13 @@ class DQN_openpit():
                 
                 for i in range(self.NUM_AGENTS):
                     if agent_status[i] != 'enroute' and agent_status[i] != 'in mill queue' and agent_status[i] != 'in shovel queue' :
-                        next_state = to_categorical(state_n[i])
+                        next_state = tf.one_hot(state_n[i][0], self.action_size).numpy().tolist() + state_n[i][1:self.state_size]
+                        # next_state = to_categorical(state_n[i])
                         action = action_n[i]
                         reward = reward_n[i]
                         total_reward += np.sum(reward_n[i])
         
-                        next_state = np.reshape(next_state, [1, self.state_size])
+                        #next_state = np.reshape(next_state, [1, self.state_size])
                         self.memorize(state, action, reward, next_state, done)
                         
                         # For the next iteration
