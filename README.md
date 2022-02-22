@@ -1,2 +1,2 @@
 # OpenPit-AI-Deep-Reinforcement-Learning
-DQN for smart fleet management for decarbonization
+Deep Q-Learning (DQN) for smart fleet management for decarbonization...
