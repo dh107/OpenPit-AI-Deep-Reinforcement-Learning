@@ -161,7 +161,7 @@ class DQN_openpit():
             state = np.zeros((self.NUM_AGENTS,self.state_size), dtype=int).tolist()
             
             #state = np.reshape(state, [1, state_size])        
-            for time in range(500):
+            for time in range(self.period_each_epi):
                 # env.render()
                 
                 # multi-agent:
